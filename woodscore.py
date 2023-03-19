@@ -52,7 +52,7 @@ class Woodscore():
         
         
         """
-        # TODO: Compute the different scores of the module
+        # TODO: Compute the different scores of the modules
         cosine_sim_matrix = self.compute_cosine_similatiry()
         sum_matrix = self.compute_summed_matrix(cosine_sim_matrix)
 
