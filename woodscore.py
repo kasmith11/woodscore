@@ -20,14 +20,14 @@ class Woodscore():
         self.b = b
 
     def compute_cosine_similatiry(self):
-        embeddings_xtrain = self.model.encode(self.xtrain, convert_to_tensor=True).cpu().detach().numpy()
-        embedding_xtest = self.model.encode(self.xtest, convert_to_tensor=True).cpu().detach().numpy()
-        cosine_sim_matrix = cosine_similarity(embeddings_xtrain, embedding_xtest)
+        embeddings_xtrain = self.model.encode(self.xtrain, convert_to_tensor=True).cpu()
+        embedding_xtest = self.model.encode(self.xtest, convert_to_tensor=True).cpu()
+        cosine_sim_matrix = cosine_similarity(embedding_xtest, embeddings_xtrain)
         return cosine_sim_matrix
 
     def compute_summed_matrix(self, cosine_sim_matrix):
-        sum_matrix = np.sum(cosine_sim_matrix[:self.b], axis = 0)
-        sum_matrix[::-1].sort()
+        sorted_matrix = -np.sort(-cosine_sim_matrix)
+        sum_matrix = np.sum(cosine_sim_matrix[:, :self.b], axis = 1)
         return sum_matrix
 
     def compute_metric(self):
