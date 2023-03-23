@@ -5,12 +5,69 @@ import numpy as np
 
 class Woodscore():
     """
-    Step 1 - For the init what do we need from the user? - Parameters??
+    Computes the wood score for a given test set.
 
-    "I" looks like an initial parameter?
+    Attributes:
+    -----------
+    xtrain : list
+        The training data.
+    xtest : list
+        The test data.
+    ytest : list
+        The reference labels for the test data.
+    pred : list
+        The predicted labels for the test data.
+    model : sentence_transformers.SentenceTransformer
+        The model to be used for encoding the training and test data: https://www.sbert.net/#
+    a : float
+        A parameter that controls the weight of p in the final score.
+    b : int
+        The number of training samples with highest similarity scores to be used for computing p.
+
+    Algorithm:
+    ----------
+    1. Compute the cosine similarity matrix between the test and training data
+        which returns a (n_test_samples, n_test_sample) sized array.
+    2. Compute the summed matrix using the cosine similarity matrix
+        only usined the first "b" number of test cases ordered in
+        descending order by simularity score.
+    3. Compute p for each test sample using the summed matrix and the parameter a.
+    4. Compute the accuracy score for each test sample.
+    5. Compute the wood score by taking the weighted average of the accuracy scores.
+
+    Example:
+    ----------
+
+    from sentence_transformers import SentenceTransformer, util
+    from sklearn.datasets import fetch_20newsgroups
+    import numpy as np
+    from woodscore import Woodscore
+
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+
+    cats = ['alt.atheism', 'sci.space']
+    newsgroups_train = fetch_20newsgroups(subset='train', categories=cats)
+
+    newsgroups_test = fetch_20newsgroups(subset='test',
+                                    categories=cats)
+
+    b = 50
+
+    a = 10
+
+    predictions = np.zeros((len(newsgroups_test.target),))
+
+    wood_score = Woodscore(newsgroups_train.data, newsgroups_test.data,
+                                    newsgroups_test.target, predictions, model, b, a)
+                                   
+    wood_score.compute_metric()
+
+    Returns:
+    --------
+    result : float
+        The wood score.
     """
     def __init__(self, training_data, test_data, references, predictions, model, b, a):
-        self.accuracy = []
         self.xtrain = training_data
         self.xtest = test_data
         self.ytest = references
@@ -31,39 +88,17 @@ class Woodscore():
         return sum_matrix
 
     def compute_metric(self):
-        """Returns the scores
-        
-        Algorithm:
-
-        https://www.sbert.net/#
-
-        We want to take the cosine similarity between each sample in the training set with each sample of the
-        testing set.
-
-        To get rid of a for loop we can run use a matrix for the cosine similarity!  
-                https://stackoverflow.com/questions/50411191/how-to-compute-the-cosine-similarity-in-pytorch-for-all-rows-in-a-matrix-with-re  
-        
-        So now this is all a function of how we'd like to take the mean of that matrix?:
-            https://pytorch.org/docs/stable/generated/torch.mean.html#torch.mean
-            It should be accross the first axis - torch.mean(a, 1)
-
-        Once we have all of our average similarities we can enumerate over all of the test cases?:
-            https://www.geeksforgeeks.org/use-enumerate-and-zip-together-in-python/
-        
-        
-        """
-        # TODO: Compute the different scores of the modules
         cosine_sim_matrix = self.compute_cosine_similatiry()
         sum_matrix = self.compute_summed_matrix(cosine_sim_matrix)
-
-
         p_matrix = self.a / sum_matrix
+
         accuracies = []
         for count, value in enumerate(self.ytest):
             accuracy = accuracy_score([value], [int(self.pred[count])])
             p = p_matrix[count]
             accuracies.append(accuracy*p)
-    
+
         result = sum(accuracies) / len(accuracies)
         print(f'Wood Score v1 = {result}!')
+        return result
 
