@@ -7,15 +7,26 @@ class Woodscore():
     """
     Computes the wood score for a given test set.
 
+    Citation:
+    --------
+    @misc{mishra2020evaluation,
+      title={Our Evaluation Metric Needs an Update to Encourage Generalization}, 
+      author={Swaroop Mishra and Anjana Arunkumar and Chris Bryan and Chitta Baral},
+      year={2020},
+      eprint={2007.06898},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+    }
+
     Attributes:
     -----------
     xtrain : list
         The training data.
     xtest : list
         The test data.
-    ytest : list
+    ytest : array
         The reference labels for the test data.
-    pred : list
+    pred : array
         The predicted labels for the test data.
     model : sentence_transformers.SentenceTransformer
         The model to be used for encoding the training and test data: https://www.sbert.net/#
