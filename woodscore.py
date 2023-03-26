@@ -37,7 +37,6 @@ class Woodscore():
 
     Example:
     ----------
-
     from sentence_transformers import SentenceTransformer, util
     from sklearn.datasets import fetch_20newsgroups
     import numpy as np
