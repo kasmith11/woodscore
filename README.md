@@ -38,6 +38,7 @@ wood_score.compute_metric()
 ```
 
 ## Citation
+```
 @misc{mishra2020evaluation,
       title={Our Evaluation Metric Needs an Update to Encourage Generalization}, 
       author={Swaroop Mishra and Anjana Arunkumar and Chris Bryan and Chitta Baral},
@@ -45,4 +46,5 @@ wood_score.compute_metric()
       eprint={2007.06898},
       archivePrefix={arXiv},
       primaryClass={cs.CL}
-}
+      }
+```
